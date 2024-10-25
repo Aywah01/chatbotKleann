@@ -1,0 +1,73 @@
+body {
+    background-color: #121212; /* Dark background for the body */
+    color: white; /* Text color */
+    font-family: 'Arial', sans-serif; /* Font style */
+    margin: 0; /* No margin */
+    padding: 0; /* No padding */
+    display: flex; /* Flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+}
+
+#chat-container {
+    background-color: #1e1e1e; /* Slightly lighter gray for chat container */
+    border-radius: 15px; /* Rounded corners */
+    padding: 30px; /* Padding around the content */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+    width: 100%; /* Full width for the container */
+    max-width: 450px; /* Max width */
+    text-align: center; /* Center text alignment */
+}
+
+h1 {
+    margin-bottom: 20px; /* Spacing below the title */
+    font-size: 24px; /* Title font size */
+}
+
+#chat-form {
+    display: flex; /* Flexbox for form layout */
+    flex-direction: column; /* Column direction */
+    gap: 10px; /* Gap between elements */
+}
+
+input[type="text"],
+input[type="submit"] {
+    padding: 15px; /* Increased padding */
+    border: 2px solid #333; /* Border color */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 16px; /* Input text size */
+    transition: border-color 0.3s ease; /* Transition for border color */
+}
+
+input[type="text"]:focus {
+    outline: none; /* Remove outline */
+    border-color: #28a745; /* Change border color on focus */
+}
+
+input[type="submit"] {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease; /* Transition */
+}
+
+input[type="submit"]:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+#response {
+    margin-top: 20px; /* Spacing above responses */
+    background-color: #2c2c2c; /* Darker gray for response area */
+    border-radius: 10px; /* Rounded corners */
+    padding: 15px; /* Padding inside */
+    max-height: 200px; /* Max height */
+    overflow-y: auto; /* Scrollable if content overflows */
+    text-align: left; /* Left-align text */
+    transition: background-color 0.3s ease; /* Transition */
+}
+
+#response:hover {
+    background-color: #3c3c3c; /* Change background color on hover */
+}
