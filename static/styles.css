@@ -1,5 +1,5 @@
 body {
-    background-color: #121212; /* Dark background for the body */
+    background-color: white; /* Dark background for the body */
     color: white; /* Text color */
     font-family: 'Arial', sans-serif; /* Font style */
     margin: 0; /* No margin */
@@ -18,6 +18,7 @@ body {
     width: 100%; /* Full width for the container */
     max-width: 450px; /* Max width */
     text-align: center; /* Center text alignment */
+
 }
 
 h1 {
@@ -70,4 +71,28 @@ input[type="submit"]:hover {
 
 #response:hover {
     background-color: #3c3c3c; /* Change background color on hover */
+}
+
+.button-container {
+    display: flex; /* Use flexbox for horizontal alignment */
+    justify-content: center; /* Center buttons within the container */
+    gap: 10px; /* Space between buttons */
+}
+
+input[type="submit"],
+#reset-button {
+    width: 120px; /* Fixed width for both buttons */
+    padding: 15px; /* Same padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 16px; /* Same font size */
+    color: white; /* Text color */
+    background-color: #28a745; /* Green background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease; /* Transition for hover effect */
+}
+
+input[type="submit"]:hover,
+#reset-button:hover {
+    background-color: #218838; /* Darker green on hover */
 }

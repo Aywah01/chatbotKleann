@@ -1,38 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kleann AI Chatbot</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      .button-container {
+        display: flex; /* Use flexbox for horizontal alignment */
+        justify-content: center; /* Center buttons within the container */
+        gap: 10px; /* Space between buttons */
+      }
+
+      #question-section {
+        margin-bottom: 20px; /* Add space between question and input box */
+      }
+
+      /* You can customize this style to add more padding or other styles */
+      .user-answers {
+        margin: 10px 0; /* Space between user answers and response */
+        background-color: #2c2c2c; /* Darker gray background for answers */
+        border-radius: 10px; /* Rounded corners */
+        padding: 15px; /* Padding inside */
+        text-align: left; /* Left-align text */
+      }
+    </style>
+  </head>
+  <body>
     <div id="chat-container">
-        <h1>Kleann AI Chatbot</h1>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Describe your cleaning problem..." required />
-            <input type="submit" value="Send" />
-        </form>
-        <div id="response"></div>
+      <h1>Kleann AI Chatbot</h1>
+      <div id="question-section"></div>
+      <form id="chat-form">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your answer..."
+          required
+        />
+        <div class="button-container">
+          <input type="submit" value="Send" />
+          <button type="button" id="reset-button">Reset</button>
+          <!-- Reset Button -->
+        </div>
+      </form>
+      <div id="response"></div>
     </div>
 
     <script>
-        document.getElementById('chat-form').onsubmit = function (e) {
-            e.preventDefault();
-            var userInput = document.getElementById('user-input').value;
-            fetch('/ask', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userInput })
+      const questions = [
+        "What is your name?",
+        "What is your job?",
+        "How old are you?",
+        "Are you currently busy? (yes/no)",
+        "What is your level of commitment to cleaning? (low/medium/high)",
+      ];
+
+      let currentQuestion = 0;
+      const userProfile = {};
+      const userAnswers = []; // Array to store user answers
+
+      function askQuestion() {
+        if (currentQuestion < questions.length) {
+          document.getElementById("question-section").innerText =
+            questions[currentQuestion];
+        } else {
+          document.getElementById("question-section").innerText =
+            "Thank you for your answers! Now you can describe your cleaning problem.";
+          document.getElementById("user-input").placeholder =
+            "Describe your cleaning problem...";
+        }
+      }
+
+      document.getElementById("chat-form").onsubmit = function (e) {
+        e.preventDefault();
+        const userInput = document.getElementById("user-input").value;
+
+        if (currentQuestion < questions.length) {
+          // Save user input to profile and answers
+          userAnswers[currentQuestion] = userInput; // Store the answer
+          if (currentQuestion === 0) userProfile.name = userInput;
+          else if (currentQuestion === 1) userProfile.job = userInput;
+          else if (currentQuestion === 2) userProfile.age = userInput;
+          else if (currentQuestion === 3)
+            userProfile.busy = userInput.toLowerCase() === "yes";
+          else if (currentQuestion === 4)
+            userProfile.commitment_level = userInput.toLowerCase();
+
+          currentQuestion++;
+          document.getElementById("user-input").value = ""; // Clear input
+          askQuestion(); // Ask next question
+        } else {
+          // Show user answers before fetching suggestions
+          displayUserAnswers();
+
+          // Send cleaning problem along with user profile to backend
+          fetch("/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userInput, profile: userProfile }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              let tipsHtml = data.tips.join("<br>") || "No tips found.";
+              let videoHtml =
+                data.video !== "No video found."
+                  ? `<br><a href="${data.video}" target="_blank">Watch Suggested Video</a>`
+                  : "";
+              let recommendationsHtml =
+                data.recommendations.join("<br>") ||
+                "No recommendations found.";
+
+              document.getElementById("response").innerHTML =
+                tipsHtml + videoHtml + "<br><br>" + recommendationsHtml;
             })
-            .then(response => response.json())
-            .then(data => {
-              let tipsHtml = data.tips.join('<br>') || "No tips found.";
-              let videoHtml = data.video !== "No video found." ? `<br><a href="${data.video}" target="_blank">Watch Suggested Video</a>` : "";
-              
-              document.getElementById('response').innerHTML = tipsHtml + videoHtml;
-          });
-          
-        };
+            .catch((error) => {
+              document.getElementById("response").innerHTML =
+                "Error occurred: " + error;
+            });
+        }
+      };
+
+      // Function to display user answers
+      function displayUserAnswers() {
+        let answersHtml =
+          '<div class="user-answers"><strong>Your Answers:</strong><br>';
+        questions.forEach((question, index) => {
+          if (userAnswers[index]) {
+            answersHtml += `<strong>${question}</strong> ${userAnswers[index]}<br>`;
+          }
+        });
+        answersHtml += "</div>";
+
+        document.getElementById("response").innerHTML += answersHtml; // Append answers to response section
+      }
+
+      // Reset button functionality
+      document.getElementById("reset-button").onclick = function () {
+        currentQuestion = 0;
+        Object.keys(userProfile).forEach((key) => delete userProfile[key]); // Clear the user profile
+        document.getElementById("user-input").value = ""; // Clear input
+        document.getElementById("response").innerHTML = ""; // Clear previous responses
+        userAnswers.length = 0; // Clear user answers
+        askQuestion(); // Restart the questioning process
+      };
+
+      // Start asking questions
+      askQuestion();
     </script>
-</body
+  </body>
+</html>
